@@ -70,7 +70,7 @@ public class Post {
         }
         Post post = (Post) o;
         return Objects.equals(title, post.title)
-                && Objects.equals(link, post.link)
+                && Objects.equals(link, post.link);
     }
 
     @Override
@@ -80,13 +80,12 @@ public class Post {
 
     @Override
     public String toString() {
-        return "Post{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", link='" + link + '\'' +
-                ", description='" + description + '\'' +
-                ", time=" + time +
-                '}';
+        return "Post{"
+                + "id=" + id
+                + ", title='" + title + '\''
+                + ", link='" + link + '\''
+                + ", description='" + description + '\''
+                + ", time=" + time + '}';
     }
 }
 
