@@ -9,7 +9,7 @@ public class Post {
     private String description;
     private Long time;
 
-    public Post(Long id) {
+    public Post() {
     }
 
     public Post(Long id, String title, String link, String description, Long time) {
