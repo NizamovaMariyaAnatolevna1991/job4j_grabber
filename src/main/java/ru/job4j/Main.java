@@ -15,6 +15,7 @@ public class Main {
     private static final Logger LOG = Logger.getLogger(Config.class);
 
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        LOG.info("Приложение запущено!");
         var config = new Config();
         config.load("application.properties");
         try (var connection = DriverManager.getConnection(config.get("db.url"),
@@ -23,7 +24,10 @@ public class Main {
             var store = new JdbcStore(connection);
             var post = new Post();
             post.setTitle("Super Java Job");
+            post.setTime(System.currentTimeMillis());
+            post.setLink("//http:");
             store.save(post);
+            store.getAll();
             scheduler.init();
             scheduler.load(
                     Integer.parseInt(config.get("rabbit.interval")),

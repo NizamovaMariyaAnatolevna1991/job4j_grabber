@@ -1,6 +1,8 @@
 package ru.job4j.grabber.stores;
 
 import ru.job4j.grabber.model.Post;
+import org.apache.log4j.Logger;
+import ru.job4j.grabber.service.Config;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class JdbcStore implements Store {
+    private static final Logger LOG = Logger.getLogger(Config.class);
     private final Connection connection;
 
     public JdbcStore(Connection connection) {
@@ -21,15 +24,16 @@ public class JdbcStore implements Store {
                              Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getDescription());
-            statement.setString(3, post.getTitle());
+            statement.setString(3, post.getLink());
             statement.setTimestamp(4, new Timestamp(post.getTime()));
+            statement.execute();
             try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     post.setId((long) generatedKeys.getInt(1));
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Ошибка при сохранении вакансии", e);
         }
     }
 
@@ -43,7 +47,7 @@ public class JdbcStore implements Store {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Ошибка при получении всех вакансий", e);
         }
         return post;
     }
@@ -68,7 +72,7 @@ public class JdbcStore implements Store {
         return new Post(
                 (long) resultSet.getInt("id"),
                 resultSet.getString("title"),
-                resultSet.getString("descriotion"),
+                resultSet.getString("description"),
                 resultSet.getString("link"),
                 (long) resultSet.getTimestamp("time").getTime()
         );
