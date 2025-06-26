@@ -3,8 +3,12 @@ package ru.job4j.grabber.service;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import ru.job4j.grabber.model.Post;
+import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
+
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,15 +30,18 @@ public class HabrCareerParse implements Parse {
             rows.forEach(row -> {
                 var titleElement = row.select(".vacancy-card__title").first();
                 var linkElement = titleElement.child(0);
-                var datetimeElement = (row.select(".vacancy-card__date").first()).child(0);
+                var datetimeElement = row.select(".vacancy-card__date time").first();
                 String vacancyName = titleElement.text();
                 String link = String.format("%s%s", SOURCE_LINK,
                         linkElement.attr("href"));
-                Timestamp date = Timestamp.valueOf(datetimeElement.data());
+                String dateTimeString = datetimeElement.attr("datetime");
+                LOG.info("Дата с сайта" + dateTimeString);
+                LocalDateTime dateTime = new HabrCareerDateTimeParser().parse(dateTimeString);
+                long timestamp = dateTime.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
                 var post = new Post();
                 post.setTitle(vacancyName);
                 post.setLink(link);
-                post.setTime(date.getTime());
+                post.setTime(timestamp);
                 result.add(post);
             });
         } catch (IOException e) {
