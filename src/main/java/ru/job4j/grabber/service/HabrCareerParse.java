@@ -22,28 +22,30 @@ public class HabrCareerParse implements Parse {
     public List<Post> fetch() {
         var result = new ArrayList<Post>();
         try {
-            int pageNumber = 1;
-            String fullLink = "%s%s%d%s".formatted(SOURCE_LINK, PREFIX, pageNumber, SUFFIX);
-            var connection = Jsoup.connect(fullLink);
-            var document = connection.get();
-            var rows = document.select(".vacancy-card__inner");
-            rows.forEach(row -> {
-                var titleElement = row.select(".vacancy-card__title").first();
-                var linkElement = titleElement.child(0);
-                var datetimeElement = row.select(".vacancy-card__date time").first();
-                String vacancyName = titleElement.text();
-                String link = String.format("%s%s", SOURCE_LINK,
-                        linkElement.attr("href"));
-                String dateTimeString = datetimeElement.attr("datetime");
-                LOG.info("Дата с сайта" + dateTimeString);
-                LocalDateTime dateTime = new HabrCareerDateTimeParser().parse(dateTimeString);
-                long timestamp = dateTime.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
-                var post = new Post();
-                post.setTitle(vacancyName);
-                post.setLink(link);
-                post.setTime(timestamp);
-                result.add(post);
-            });
+            int pageNumber = 5;
+            for (int i = 1; i <= pageNumber; i++) {
+                String fullLink = "%s%s%d%s".formatted(SOURCE_LINK, PREFIX, i, SUFFIX);
+                var connection = Jsoup.connect(fullLink);
+                var document = connection.get();
+                var rows = document.select(".vacancy-card__inner");
+                rows.forEach(row -> {
+                    var titleElement = row.select(".vacancy-card__title").first();
+                    var linkElement = titleElement.child(0);
+                    var datetimeElement = row.select(".vacancy-card__date time").first();
+                    String vacancyName = titleElement.text();
+                    String link = String.format("%s%s", SOURCE_LINK,
+                            linkElement.attr("href"));
+                    String dateTimeString = datetimeElement.attr("datetime");
+                    LOG.info("Дата с сайта" + dateTimeString);
+                    LocalDateTime dateTime = new HabrCareerDateTimeParser().parse(dateTimeString);
+                    long timestamp = dateTime.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
+                    var post = new Post();
+                    post.setTitle(vacancyName);
+                    post.setLink(link);
+                    post.setTime(timestamp);
+                    result.add(post);
+                });
+            }
         } catch (IOException e) {
             LOG.error("When load page", e);
         }
