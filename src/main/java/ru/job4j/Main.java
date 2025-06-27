@@ -35,8 +35,6 @@ public class Main {
 //                    SuperJobGrab.class,
 //                    store);
 //            Thread.sleep(10000);
-            HabrCareerParse habrCareerParse = new HabrCareerParse();
-            habrCareerParse.fetch();
         } catch (SQLException e) {
             LOG.error("When create a connection", e);
         }
