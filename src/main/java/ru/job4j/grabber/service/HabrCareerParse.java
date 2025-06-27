@@ -63,7 +63,7 @@ public class HabrCareerParse implements Parse {
     }
 
     private String retrieveDescription(String link) {
-        String description  = null;
+        String description = null;
         try {
             var connection = Jsoup.connect(link);
             var document = connection.get();
