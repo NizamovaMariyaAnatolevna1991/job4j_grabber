@@ -1,5 +1,6 @@
 package ru.job4j.grabber.model;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Post {
