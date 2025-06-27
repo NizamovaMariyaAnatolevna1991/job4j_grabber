@@ -51,5 +51,18 @@ public class HabrCareerParse implements Parse {
         }
         return result;
     }
+
+    public String retrieveDescription(String link) {
+        String description  = null;
+        try {
+            var connection = Jsoup.connect(link);
+            var document = connection.get();
+            var titleDescription = document.select(".vacancy-description__text").first();
+            description = titleDescription.text();
+        } catch (IOException e) {
+            LOG.error("When load link", e);
+        }
+        return description;
+    }
 }
 
