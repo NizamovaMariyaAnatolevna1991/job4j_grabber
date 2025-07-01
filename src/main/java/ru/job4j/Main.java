@@ -5,9 +5,11 @@ import ru.job4j.grabber.model.Post;
 import ru.job4j.grabber.service.*;
 import ru.job4j.grabber.stores.JdbcStore;
 import ru.job4j.grabber.stores.Store;
+import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
 public class Main {
     private static final Logger LOG = Logger.getLogger(Config.class);
@@ -21,9 +23,13 @@ public class Main {
 
             Store store = new JdbcStore(connection);
 
-            var post = new Post();
-            post.setTitle("Super Java Job");
-            store.save(post);
+            HabrCareerParse habrCareerParse = new HabrCareerParse(new HabrCareerDateTimeParser());
+            List<Post> fetch = habrCareerParse.fetch();
+            for (Post post : fetch) {
+                store.save(post);
+            }
+
+            Thread.sleep(150_000);
 
             var scheduler = new SchedulerManager();
             scheduler.init();
@@ -35,6 +41,8 @@ public class Main {
             new Web(store).start(Integer.parseInt(config.get("server.port")));
         } catch (SQLException e) {
             LOG.error("When create a connection", e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -72,8 +72,8 @@ public class JdbcStore implements Store {
         return new Post(
                 (long) resultSet.getInt("id"),
                 resultSet.getString("title"),
-                resultSet.getString("description"),
                 resultSet.getString("link"),
+                resultSet.getString("description"),
                 (long) resultSet.getTimestamp("time").getTime()
         );
     }

@@ -44,7 +44,6 @@ public class HabrCareerParse implements Parse {
                     String link = String.format("%s%s", SOURCE_LINK,
                             linkElement.attr("href"));
                     String dateTimeString = datetimeElement.attr("datetime");
-                    LOG.info("Дата с сайта" + dateTimeString);
                     LocalDateTime dateTime = dateTimeParser.parse(dateTimeString);
                     long timestamp = dateTime.atZone(ZoneOffset.UTC).toInstant().toEpochMilli();
 

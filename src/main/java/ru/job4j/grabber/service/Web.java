@@ -11,17 +11,18 @@ public class Web {
     }
 
     public void start(int port) {
-        // Создаем сервер Javalin
-        var app = Javalin.create();
+        var app = Javalin.create(config -> {
+            config.http.defaultContentType = "text/html; charset=utf-8";
+        });
 
-        // Указываем порт, на котором будет работать сервер
         app.start(port);
 
-        // Формируем страницу с вакансиями
         var page = new StringBuilder();
         store.getAll().forEach(post -> page.append(post.toString()).append(System.lineSeparator()));
 
-        // Настраиваем обработчик для корневого URL
-        app.get("/", ctx -> ctx.result(page.toString()));
+        app.get("/", ctx -> {
+            ctx.contentType("text/html; charset=utf-8");
+            ctx.result(page.toString());
+        });
     }
 }
